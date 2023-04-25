@@ -47,41 +47,16 @@ exports.updateProduct = async (req, res) => {
 }
 
 // Delete Product
-// exports.deleteProduct = async(req, res, next) => {
-//     const product = Product.find(req.params.id);
-
-//     if(!product){
-//         return res.status(500).json({
-//             success: false,
-//             message: "Product Not Found"
-//         })
-//     }
-
-//     await product.findOneAndRemove();
-
-//     res.status(200).json({
-//         success: true,
-//         message: "Product Delete Successfully"
-//     })
-// }
-
-exports.deleteProduct = async (req, res, next) => {
+exports.deleteProduct = async(req, res, next) => {
     const product = await Product.findById(req.params.id);
-    
 
-    if(!product){
+    if(!product) {
         return res.status(500).json({
             success: false,
             message: "Product Not Found"
-        })
+        });
     }
 
-    // if(!product){
-    //     return next(new ErrorHandler("Product not Found", 404));
-    // }
-
-    // console.log(product);
-    // product.remove();
     await Product.findByIdAndRemove(req.params.id);
 
     res.status(200).json({
