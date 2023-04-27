@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const ErrorHandler = require("../utils/errorhandler");
 
 // Create Product -- Admin
 exports.createProduct = async (req, res, next) => {
@@ -21,11 +22,32 @@ exports.getAllProducts = async (req, res) => {
     });
 }
 
+// Get Product Details      // i.e., Get Single Product
+exports.getProductDetails = async(req, res, next) => {
+    let product;
+
+    try {
+        product = await Product.findById(req.params.id);
+    } catch(error) {
+        return res.status(500).json({
+            success: false,
+            message: "Product Not Found"
+        })
+    }    
+
+    res.status(200).json({
+        success: true,
+        product
+    })
+
+}
+
 // Update Product -- Admin
 exports.updateProduct = async (req, res) => {
-    let product = await Product.findById(req.params.id);
-
-    if(!product){
+    let product
+    try {
+        product = await Product.findById(req.params.id);
+    } catch(error) {
         return res.status(500).json({
             success: false,
             message: "Product Not Found"
@@ -48,16 +70,17 @@ exports.updateProduct = async (req, res) => {
 
 // Delete Product
 exports.deleteProduct = async(req, res, next) => {
-    const product = await Product.findById(req.params.id);
-
-    if(!product) {
+    try {
+        const product = await Product.findById(req.params.id);
+    } catch(error) {
         return res.status(500).json({
             success: false,
             message: "Product Not Found"
-        });
+        })
     }
 
     await Product.findByIdAndRemove(req.params.id);
+    // await product.remove();          //not working  // works for version "mongoose": "^6.8.4",
 
     res.status(200).json({
         success: true,
